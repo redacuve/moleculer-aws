@@ -11,7 +11,7 @@ module.exports = {
 	 * Settings
 	 */
 	settings: {
-
+		middleware: true,
 	},
 
 	/**
@@ -56,6 +56,14 @@ module.exports = {
 			async handler(ctx) {
 				return `Welcome, ${ctx.params.name}`;
 			}
+		},
+
+		imageUpload: {
+			rest: "/image-upload",
+			async handler(ctx) {
+				ctx.emit('hello.called', ctx );
+				return { name: 'image upload', ctx: ctx.params };
+			}
 		}
 	},
 
@@ -70,7 +78,12 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-
+		myMiddleware(req, res, next) {
+			console.log(req);
+			console.log(res);
+			console.log('my middleware here');
+			next();
+		}
 	},
 
 	/**

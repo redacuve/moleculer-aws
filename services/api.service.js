@@ -1,5 +1,6 @@
 "use strict";
 
+const helmet = require("helmet");
 const ApiGateway = require("moleculer-web");
 
 /**
@@ -21,7 +22,7 @@ module.exports = {
 		ip: "0.0.0.0",
 
 		// Global Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
-		use: [],
+		use: [helmet()],
 
 		routes: [
 			{
