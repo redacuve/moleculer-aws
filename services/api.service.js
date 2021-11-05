@@ -116,6 +116,85 @@ module.exports = {
 				// Enable/disable logging
 				logging: true,
 			},
+			{
+				path: "upload",
+
+				// You should disable body parsers
+				bodyParsers: {
+					json: false,
+					urlencoded: false
+				},
+
+				aliases: {
+					// File upload from HTML form
+					"POST /": "multipart:file.save",
+
+					// File upload from AJAX or cURL
+					"PUT /": "stream:file.save",
+
+					// File upload from AJAX or cURL with params
+					"PUT /:id": "stream:file.save",
+
+					// File upload from HTML form and overwrite busboy config
+					"POST /single/:id": {
+						type: "multipart",
+						// Action level busboy config
+						busboyConfig: {
+							//empty: true,
+							limits: {
+								files: 1
+							},
+							onPartsLimit(busboy, alias, svc) {
+								this.logger.info("Busboy parts limit!", busboy);
+							},
+							onFilesLimit(busboy, alias, svc) {
+								this.logger.info("Busboy file limit!", busboy);
+							},
+							onFieldsLimit(busboy, alias, svc) {
+								this.logger.info("Busboy fields limit!", busboy);
+							}
+						},
+						action: "file.save"
+					},
+
+					// File upload from HTML form and overwrite busboy config
+					"POST /multi": {
+						type: "multipart",
+						// Action level busboy config
+						busboyConfig: {
+							limits: {
+								files: 3,
+								fileSize: 1 * 1024 * 1024
+							},
+							onPartsLimit(busboy, alias, svc) {
+								this.logger.info("Busboy parts limit!", busboy);
+							},
+							onFilesLimit(busboy, alias, svc) {
+								this.logger.info("Busboy file limit!", busboy);
+							},
+							onFieldsLimit(busboy, alias, svc) {
+								this.logger.info("Busboy fields limit!", busboy);
+							}
+						},
+						action: "file.save"
+					}
+				},
+
+				// https://github.com/mscdex/busboy#busboy-methods
+				busboyConfig: {
+					limits: {
+						files: 1
+					}
+				},
+
+				callOptions: {
+					meta: {
+						a: 5
+					}
+				},
+
+				mappingPolicy: "restrict"
+			},
 		],
 
 		// Do not log client side errors (does not log an error response when the error.code is 400<=X<500)
