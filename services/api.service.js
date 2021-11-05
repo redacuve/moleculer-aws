@@ -128,56 +128,6 @@ module.exports = {
 				aliases: {
 					// File upload from HTML form
 					"POST /": "multipart:file.save",
-
-					// File upload from AJAX or cURL
-					"PUT /": "stream:file.save",
-
-					// File upload from AJAX or cURL with params
-					"PUT /:id": "stream:file.save",
-
-					// File upload from HTML form and overwrite busboy config
-					"POST /single/:id": {
-						type: "multipart",
-						// Action level busboy config
-						busboyConfig: {
-							//empty: true,
-							limits: {
-								files: 1
-							},
-							onPartsLimit(busboy, alias, svc) {
-								this.logger.info("Busboy parts limit!", busboy);
-							},
-							onFilesLimit(busboy, alias, svc) {
-								this.logger.info("Busboy file limit!", busboy);
-							},
-							onFieldsLimit(busboy, alias, svc) {
-								this.logger.info("Busboy fields limit!", busboy);
-							}
-						},
-						action: "file.save"
-					},
-
-					// File upload from HTML form and overwrite busboy config
-					"POST /multi": {
-						type: "multipart",
-						// Action level busboy config
-						busboyConfig: {
-							limits: {
-								files: 3,
-								fileSize: 1 * 1024 * 1024
-							},
-							onPartsLimit(busboy, alias, svc) {
-								this.logger.info("Busboy parts limit!", busboy);
-							},
-							onFilesLimit(busboy, alias, svc) {
-								this.logger.info("Busboy file limit!", busboy);
-							},
-							onFieldsLimit(busboy, alias, svc) {
-								this.logger.info("Busboy fields limit!", busboy);
-							}
-						},
-						action: "file.save"
-					}
 				},
 
 				// https://github.com/mscdex/busboy#busboy-methods
