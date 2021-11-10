@@ -2,6 +2,7 @@
 
 const helmet = require("helmet");
 const ApiGateway = require("moleculer-web");
+require('dotenv').config();
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -128,6 +129,8 @@ module.exports = {
 				aliases: {
 					// File upload from HTML form
 					"POST /": "multipart:file.save",
+					"GET /": "file.get",
+					"DELETE /": "file.delete",
 				},
 
 				// https://github.com/mscdex/busboy#busboy-methods

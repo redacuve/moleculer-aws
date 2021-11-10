@@ -25,7 +25,10 @@
     "moleculer-repl": "^0.6.6"
   },
   "dependencies": {
-    "aws-sdk": "^2.1021.0",
+    "@aws-sdk/client-s3": "^3.40.1",
+    "@aws-sdk/s3-request-presigner": "^3.40.1",
+    "aws-sdk": "^2.1023.0",
+    "dotenv": "^10.0.0",
     "helmet": "^4.6.0",
     "moleculer": "^0.14.16",
     "moleculer-db": "^0.8.15",
