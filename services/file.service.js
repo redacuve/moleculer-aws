@@ -12,10 +12,6 @@ const BUCKET_NAME = process.env.BUCKET_NAME;
 const REGION = process.env.REGION;
 const ACCESS_KEY_ID = process.env.ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
-console.log(BUCKET_NAME);
-console.log(REGION);
-console.log(ACCESS_KEY_ID);
-console.log(SECRET_ACCESS_KEY);
 
 const clienteS3 = new S3Client({ region: REGION, credentials: { accessKeyId: ACCESS_KEY_ID, secretAccessKey: SECRET_ACCESS_KEY } });
 
@@ -28,7 +24,7 @@ const uploadParams = (data, idP, type, idF, name, length) => ({
   // ContentType: 'image/jpg',
   Body: data,
   // ContentLength: 470646,
-  ContentLength: length,
+  ContentLength: Number(length),
   // ACL: 'public-read',
   });
 
@@ -56,8 +52,8 @@ module.exports = {
 				// return fs.createReadStream(filePath);
         
         //const data = await clienteS3.send(new GetObjectCommand(bucketParams));
-        // const lsd = await clienteS3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME }));
-        const lsd = await clienteS3.send(new ListObjectsCommand({ Bucket: BUCKET_NAME, Prefix: '1/registro/1/' }));
+        const lsd = await clienteS3.send(new ListObjectsCommand({ Bucket: BUCKET_NAME }));
+        // const lsd = await clienteS3.send(new ListObjectsCommand({ Bucket: BUCKET_NAME, Prefix: '1/registro/1/' }));
         console.log(lsd);
         const signedURL = await getSignedUrl(clienteS3, new GetObjectCommand(bucketParams), { expiresIn: 3600 });
         console.log(signedURL);
@@ -68,17 +64,18 @@ module.exports = {
 
 		save: {
 			async handler(ctx) {
-				this.logger.info("Received upload $params:", ctx.meta.$params);
-        console.log(ctx.params);
-        let buff = [];
-        let len = 0;
-        await ctx.params.on('data', (chunk) => {
-          buff.push(chunk);
-          len += chunk.length;
-          // console.log('ne chunk', chunk);
-        });
+				// this.logger.info("Received upload $params:", ctx.meta.$params);
+        // console.log(ctx.params);
+        // let buff = [];
+        // let len = 0;
+        // await ctx.params.on('data', (chunk) => {
+        //   buff.push(chunk);
+        //   len += chunk.length;
+        //   // console.log('ne chunk', chunk);
+        // });
         // console.log(uploadParams(buff));
         console.log('------------------------');
+        console.log(ctx.meta.$multipart);
         const lsd = await clienteS3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME }));
         console.log(lsd);
         console.log('----------------------------------');
@@ -86,14 +83,27 @@ module.exports = {
           // console.log(uploadParams(ctx.params));
           // const url = await clienteS3.send(new PutObjectCommand(uploadParams(ctx.params)));
           // const url = await clienteS3.send(new PutObjectCommand(uploadParams(buff)));
-          const stream = await Readable.from(buff);
-          console.log('.................');
+          // const stream = await Readable.from(buff);
+          // console.log('.................');
           // console.log(stream);
           // console.log(uploadParams(stream));
           // console.log(buff.length);
           // console.log(lll);
-          console.log('.................');
-          const url = await clienteS3.send(new PutObjectCommand(uploadParams(stream, 1, 'registro', 1, ctx.meta.filename, len)));
+          // console.log('.................');
+          const idMedico = ctx.meta.$multipart.idMedico;
+          const idPaciente = ctx.meta.$multipart.idPaciente;
+          const nombre = ctx.meta.$multipart.nombre;
+          const peso = ctx.meta.$multipart.peso;
+          const registro = ctx.meta.$multipart.registro;
+          console.log('-----------------------');
+          console.log(idMedico);
+          console.log(idPaciente);
+          console.log(nombre);
+          console.log(peso);
+          console.log(registro);
+          console.log('-----------------------');
+          const url = await clienteS3.send(new PutObjectCommand(uploadParams(ctx.params, idPaciente, registro, 5, nombre, peso)));
+          // const url = await clienteS3.send(new PutObjectCommand(uploadParams(stream, 1, 'registro', 1, ctx.meta.filename, len)));
           // const url = await clienteS3.send(new PutObjectCommand(bucketParams));
           console.log(url);
         } catch (e) {
